@@ -1,0 +1,11 @@
+之前演示的springdata + jpa + spring 的版本比较老了，有些功能都用不上，所以我们这次咬咬牙，全都换新一点的jar包
+要学就学新的嘛
+
+本次的jar 包版本：
+	spring 版本：  5.0.0
+	springdata + jpa:  核心包和整合包都是 2.0.0
+	hibernate : 虽然版本不是很新，但是还是支持jpa新版本的  CriteriaBuilder 接口的
+	            session.createCriteria()   方法虽然没有过时 ，但是其实早就支持新接口了，5.2版本才真正标为过时 
+
+1、  QueryByExampleExecutor 接口
+2、 JpaSpecificationExecutor 接口

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.8.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<!-- 创建dataSource 对象 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
+		<property name="jdbcUrl" value="jdbc:mysql:///jpa_springdata10000?serverTimezone=Asia/Shanghai&amp;useSSL=false"/>
+		<property name="user" value="root"/>
+		<property name="password" value="root"/>
+	</bean>
+	
+	<!-- 创建entityManagerFactory 对象 -->
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<!-- 引入 dataSource -->
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 设置jpa提供商提供的配置器 -->
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+		</property>
+		<!-- 设置实体类的包扫描 -->
+		<property name="packagesToScan" value="cn.itcast.entity"/>
+		<!-- 设置hibernate 一些基本的参数 -->
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 设置事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
+	
+	<!-- 设置使用注解  -->
+	<!-- 事务注解生效 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<!-- 设置spring 实体类扫描 -->
+	<context:annotation-config />
+	<context:component-scan base-package="cn.itcast.*"/>
+	
+	<!-- 配置一个springdata扫描 dao 包下的接口，让springdata 自动生成实现类对象  -->
+	<jpa:repositories base-package="cn.itcast.dao"
+					  entity-manager-factory-ref="entityManagerFactory"
+					  transaction-manager-ref="transactionManager"
+	/>
+</beans>
